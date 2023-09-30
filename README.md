@@ -13,7 +13,7 @@
     * You can do this in MySQL Workbench or intelliJ Database
 
 ## Login
-* You can login using:
+* You can login using the following:
   * Username: "agarnier"
   * password: "password"
 * Or take a look at the Employees table to see other login credentials
