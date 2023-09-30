@@ -16,5 +16,6 @@
 * You can login using the following:
   * Username: "agarnier"
   * password: "password"
+    * this is preset in the code in the LoginScreen.java for testing purposes feel free to remove it.
 * Or take a look at the Employees table to see other login credentials
 
