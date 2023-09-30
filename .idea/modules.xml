@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FinalView.iml" filepath="$PROJECT_DIR$/FinalView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Task Management System.iml" filepath="$PROJECT_DIR$/Task Management System.iml" />
     </modules>
   </component>
 </project>
