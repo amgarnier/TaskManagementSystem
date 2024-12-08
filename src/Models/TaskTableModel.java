@@ -20,7 +20,7 @@ public class TaskTableModel extends AbstractTableModel {
     }
 
     public int getColumnCount() {
-        return 5;
+        return 6;
         // return however many columns you want
     }
 
@@ -40,6 +40,8 @@ public class TaskTableModel extends AbstractTableModel {
                 return "Creation Date";
             case 4:
                 return "Project Description";
+                case 5:
+                    return "Employee Name";
 
         }
         return "Null";
@@ -54,7 +56,8 @@ public class TaskTableModel extends AbstractTableModel {
             case 2: return task.getDescription()==null ? "":task.getDescription();
             case 3: return task.getCreationDate()==null ? "":task.getCreationDate();
             case 4: return task.getProjectDescription()==null ? "":task.getProjectDescription();
-            case 5: return task.getId();
+            case 5: return task.getTeamMemberName()==null ? "":task.getTeamMemberName();
+            case 6: return task.getId();
         }
         return new Object();
     }

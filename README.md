@@ -1,4 +1,6 @@
-# TaskManagementSystem
+# TaskManagementSystem 
+##  CSIS 643
+## December 2024
 ## This is a task management system which utilizes Java and a my sql database to build a task system.
 # Running Application
 ![img.png](img.png)

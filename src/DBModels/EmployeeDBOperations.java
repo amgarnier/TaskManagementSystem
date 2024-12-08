@@ -37,7 +37,7 @@ public class EmployeeDBOperations implements IDatabaseActions<Employee> {
 
         @Override
     public boolean createItem(Employee value) {
-           String SQLCreate = "insert into employees(first_name, last_name, hire_date, user_name, employee_password, email, manager_id, phone_number) VALUES (?,?,?,?,?,?,?,?);";
+           String SQLCreate = "insert into employees(first_name, last_name, hire_date, user_name, employee_password, email, manager_id, phone_number, is_manager) VALUES (?,?,?,?,?,?,?,?,?);";
 
             ResultSet resultSet = null;
             Boolean bl = false;
@@ -50,6 +50,7 @@ public class EmployeeDBOperations implements IDatabaseActions<Employee> {
                 ps.setString(6,value.getEmail());
                 ps.setInt(7,value.getManagerId());
                 ps.setString(8,value.getPhoneNumber());
+                ps.setBoolean(9,value.isManager());
                 int result = ps.executeUpdate();
                 if(result!=0){
                     bl=true;
@@ -89,6 +90,7 @@ public class EmployeeDBOperations implements IDatabaseActions<Employee> {
                 employee.setEmail(rs.getString("email"));
                 employee.setManagerId(rs.getInt("manager_id"));
                 employee.setPhoneNumber(rs.getString("phone_number"));
+                employee.setManager(rs.getBoolean("is_manager"));
             }
         } catch (SQLException ex) {
             throw new RuntimeException(ex);

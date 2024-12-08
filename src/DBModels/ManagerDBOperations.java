@@ -26,15 +26,14 @@ public class ManagerDBOperations implements IDatabaseActions {
         try {
             //Standard JDBC Code
             Statement stmt = connection.createStatement();
-            String query = "select *\n" +
-                    "from manager\n" +
-                    "         left join employees on manager.employee_id = employees.employee_id;";
+            String query =
+                    "select * from employees where is_manager = 1";
             ResultSet rs = stmt.executeQuery(query);
             while(rs.next()) {
                 Employee employee = new Employee();
                 employee.setFirstName(rs.getString("first_name"));
                 employee.setLastName(rs.getString("last_name"));
-                employee.setId(rs.getInt("manager.manager_id"));
+                employee.setId(rs.getInt("manager_id"));
                 list.add(employee);
             }
         }
@@ -43,6 +42,7 @@ public class ManagerDBOperations implements IDatabaseActions {
         }
         return list;
     }
+
 
     @Override
     public boolean createItem(Object value) {

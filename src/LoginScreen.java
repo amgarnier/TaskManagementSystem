@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 /**
  * FinalView -- Brief statement as to file purpose
- * CSIS 212 -- B032023
+ * CSIS 643 -- B032023
  * Citations as needed
  */
 public class LoginScreen extends JFrame {

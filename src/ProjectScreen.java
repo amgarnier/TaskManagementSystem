@@ -13,7 +13,7 @@ import java.util.Calendar;
 
 /**
  * FinalView -- Brief statement as to file purpose
- * CSIS 212 -- B032023
+ *  CSIS 643
  * Citations as needed
  */
 public class ProjectScreen extends JFrame {

@@ -19,8 +19,10 @@ public class Task {
     private int project;
     private String projectDescription;
     private String title;
+    private EmployeesTableModel employees;
+    private String teamMemberName;
 
-    public Task( int teamMember, String description, Date creationDate, Date endDate, Date dueDate, boolean complete, String serialNumber, int project, String projectDescription) {
+    public Task( int teamMember, String description, Date creationDate, Date endDate, Date dueDate, boolean complete, String serialNumber, int project, String projectDescription, String teamMemberName) {
         this.teamMember = teamMember;
         this.description = description;
         this.creationDate = creationDate;
@@ -30,8 +32,9 @@ public class Task {
         this.serialNumber = serialNumber;
         this.project = project;
         this.projectDescription = projectDescription;
+        this.teamMemberName = teamMemberName;
     }
-    public Task(int id ,int teamMember, String description, Date creationDate, Date endDate, Date dueDate, boolean complete, String serialNumber, int project, String projectDescription) {
+    public Task(int id ,int teamMember, String description, Date creationDate, Date endDate, Date dueDate, boolean complete, String serialNumber, int project, String projectDescription, String teamMemberName) {
         this.id = id;
         this.teamMember = teamMember;
         this.description = description;
@@ -42,6 +45,7 @@ public class Task {
         this.serialNumber = serialNumber;
         this.project = project;
         this.projectDescription = projectDescription;
+        this.teamMemberName = teamMemberName;
     }
     public Task( int teamMember, String description, Date creationDate, Date dueDate, int project, String title) {
         this.title=title;
@@ -88,10 +92,15 @@ public class Task {
         this.description = description;
     }
 
+    public String getTeamMemberName() {return teamMemberName;}
+    public void setTeamMemberName(String teamMemberName) {this.teamMemberName = teamMemberName;}
+
     public Date getCreationDate() {
         return creationDate;
 
     }
+
+    public EmployeesTableModel getEmployees() {return employees;}
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;

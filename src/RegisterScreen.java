@@ -3,19 +3,16 @@ import DBModels.ManagerDBOperations;
 import Models.Employee;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * FinalView -- Brief statement as to file purpose
- * CSIS 212 -- B032023
+ *  CSIS 643
  * Citations as needed
  */
 public class RegisterScreen extends  JFrame{
@@ -30,6 +27,8 @@ public class RegisterScreen extends  JFrame{
     private JButton createButton;
     private JPanel jPanel;
     private JTextField tfHireDate;
+    private JRadioButton staffRadioButton;
+    private JRadioButton managerRadioButton;
 
     public RegisterScreen(){
 
@@ -59,7 +58,7 @@ public class RegisterScreen extends  JFrame{
                         System.out.println("invalid Date try again");
                         throw new RuntimeException(ex);
                     }
-                    Employee employee = new Employee(tfFirstName.getText(),tfLastName.getText(),sqlStartDate,tfUserName.getText(),password,tfEmail.getText(),managerId,tfPhoneNumber.getText());
+                    Employee employee = new Employee(tfFirstName.getText(),tfLastName.getText(),sqlStartDate,tfUserName.getText(),password,tfEmail.getText(),managerId,tfPhoneNumber.getText(), managerRadioButton.isSelected());
                     Boolean result= employeeDBOperations.createItem(employee);
                     if (result==false){
                         JOptionPane.showMessageDialog(null, "Invalid User Creation");

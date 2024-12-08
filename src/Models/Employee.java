@@ -15,6 +15,7 @@ public class Employee {
     private String userName;
     private String password;
     private String email;
+    private boolean isManager;
     public Employee(String userName, String password){
         this.userName=userName;
         this.password=password;
@@ -23,7 +24,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String firstName, String lastName, Date hireDate, String userName, String password, String email, Integer managerId, String phoneNumber) {
+    public Employee(String firstName, String lastName, Date hireDate, String userName, String password, String email, Integer managerId, String phoneNumber, Boolean isManager) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.hireDate = hireDate;
@@ -32,6 +33,7 @@ public class Employee {
         this.email = email;
         this.managerId = managerId;
         this.phoneNumber = phoneNumber;
+        this.isManager = isManager;
     }
 
     public Integer getManagerId() {
@@ -109,6 +111,14 @@ public class Employee {
     }
 
     private String phoneNumber;
+
+    public boolean isManager() {
+        return isManager;
+    }
+
+    public void setManager(boolean isManager) {
+        this.isManager = isManager;
+    }
 
     @Override
     public String toString() {

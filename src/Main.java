@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 /**
  * Default (Template) Project -- Brief statement as to file purpose
- * CSIS 212 -- B032023
+ * CSIS 643
  * Citations as needed
  */
 public class Main {

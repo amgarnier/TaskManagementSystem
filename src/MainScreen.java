@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 /**
  * FinalView -- Brief statement as to file purpose
- * CSIS 212 -- B032023
+ * CSIS 643 -- B032023
  * Citations as needed
  */
 public class MainScreen extends JFrame{
@@ -42,7 +42,7 @@ public class MainScreen extends JFrame{
                 if(e.getClickCount()==2){
                     if(table1.getSelectedRow()!=-1){
                         int row = table1.getSelectedRow();
-                        int value = (int) table1.getModel().getValueAt(row, 5);
+                        int value = (int) table1.getModel().getValueAt(row, 6);
                         System.out.println(value);
                         int xpos = getBounds().x+500-300;
                         int ypos = getBounds().y+400-200;
@@ -75,8 +75,9 @@ public class MainScreen extends JFrame{
 
     void updateTables(){
         int employeeID = Main.employee.getId();
-        TableModel tableModel = new Models.TaskTableModel(updateTaskTable(employeeID));
-        TableModel tableModel2 = new Models.ProjectTableModel(updateProjectTable(employeeID));
+        boolean isManager = Main.employee.isManager();
+        TableModel tableModel = new Models.TaskTableModel(updateTaskTable(employeeID, isManager));
+        TableModel tableModel2 = new Models.ProjectTableModel(updateProjectTable(employeeID, isManager));
         if(employeeID != 0) {
 
             table1.setModel(tableModel);
@@ -86,7 +87,13 @@ public class MainScreen extends JFrame{
             table2.getSelectedRow();
             EmployeeDBOperations emplDB = new EmployeeDBOperations(Main.connection);
             Employee employee = emplDB.retrieveItem(employeeID);
-            jlWelcomBar.setText( "Welcome " + employee.getFirstName() + " " + employee.getLastName());
+            if(employee.isManager()){
+                jlWelcomBar.setText( "Welcome Manager " + employee.getFirstName() + " " + employee.getLastName());
+            }
+            else {
+                jlWelcomBar.setText( "Welcome " + employee.getFirstName() + " " + employee.getLastName());
+            }
+
         }
         else{
             table1.setModel(tableModel);
@@ -105,15 +112,22 @@ public class MainScreen extends JFrame{
         return rect;
     }
 
-    ArrayList<Task> updateTaskTable(int employeeID){
+    //todo update table to show the name of the employee
+
+    ArrayList<Task> updateTaskTable(int employeeID, boolean isManager){
         ArrayList<Task> taskArrayList = new ArrayList();
         //this is where we update the table info for main screen
         TaskDBOperations taskDBOperations = new TaskDBOperations(Main.connection);
-        taskArrayList = taskDBOperations.retrieveArrayList(employeeID);
+        if(isManager){
+            taskArrayList =taskDBOperations.retrieveManagerTaskList(employeeID);
+        }
+        else {
+            taskArrayList = taskDBOperations.retrieveArrayList(employeeID);
+        }
         return taskArrayList;
     }
 
-    ArrayList<Project> updateProjectTable(int employeeID){
+    ArrayList<Project> updateProjectTable(int employeeID, boolean isManager){
         ArrayList<Project> projectArrayList = new ArrayList();
             //this is where we update the table info for main screen
             ProjectDBOperations projectDBOperations = new ProjectDBOperations(Main.connection);
@@ -173,6 +187,7 @@ public class MainScreen extends JFrame{
         menuBar.add(createFileMenu());
         return menuBar;
     }
+
 
 //
 

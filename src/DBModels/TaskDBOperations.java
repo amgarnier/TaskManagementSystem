@@ -1,5 +1,7 @@
 package DBModels;
 
+import Models.Employee;
+import Models.EmployeesTableModel;
 import Models.Task;
 
 import java.sql.*;
@@ -46,14 +48,13 @@ public class TaskDBOperations implements IDatabaseActions<Task> {
     public ArrayList retrieveArrayList( Integer employeeID){
         ArrayList list = new ArrayList();
 
-
         try {
             //Standard JDBC Code
             //todo: update the select query
             Statement stmt = connection.createStatement();
             String query = "select *\n" +
                     "from task \n" +
-                    "left join project on task.project = project.project_id\n" +
+                    "left join project on task.project = project.project_id left join employees on task.team_member = employees.employee_id \n" +
                     "where task.team_member = " + employeeID + " order by due_date asc;";
 
             ResultSet rs = stmt.executeQuery(query);
@@ -70,6 +71,7 @@ public class TaskDBOperations implements IDatabaseActions<Task> {
                 t.setProject(rs.getInt("project"));
                 t.setProjectDescription(rs.getString("description"));
                 t.setTitle(rs.getString("title_task"));
+                t.setTeamMemberName(rs.getString("first_name") + " " + rs.getString("last_name"));
 
                 list.add(t);
             }
@@ -80,11 +82,49 @@ public class TaskDBOperations implements IDatabaseActions<Task> {
         return list;
     }
 
+    public ArrayList retrieveManagerTaskList( Integer employeeID){
+        ArrayList list = new ArrayList();
+
+        try {
+            //Standard JDBC Code
+            //todo: update the select query
+            Statement stmt = connection.createStatement();
+            String query = "select *\n" +
+                    "from task \n" +
+                    "left join project on task.project = project.project_id left join employees on task.team_member = employees.employee_id\n" +
+                    "where project.manager_id = " + employeeID + " order by due_date asc;";
+
+            ResultSet rs = stmt.executeQuery(query);
+            while(rs.next()) {
+                Task t = new Task();
+                t.setId(rs.getInt("task_id"));
+                t.setTeamMember(rs.getInt("team_member"));
+                t.setDescription(rs.getString("description_task"));
+                t.setCreationDate(rs.getDate("creation_date"));
+                t.setEndDate(rs.getDate("end_date"));
+                t.setDueDate(rs.getDate("due_date"));
+                t.setComplete(rs.getBoolean("complete"));
+                t.setSerialNumber(rs.getString("response_serial_number"));
+                t.setProject(rs.getInt("project"));
+                t.setProjectDescription(rs.getString("description"));
+                t.setTitle(rs.getString("title_task"));
+                t.setTeamMemberName(rs.getString("first_name") + " " + rs.getString("last_name"));
+
+                list.add(t);
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
     @Override
     public Task retrieveItem(int taskId) {
         Task t = new Task();
         //Standard JDBC Code
-        String SQL = "select * from task where task_id =?";
+        String SQL = "select * from task left join employees on task.team_member = employees.employee_id where task_id =?";
         try(PreparedStatement ps = connection.prepareStatement(SQL)) {
             ps.setInt(1,taskId);
             ResultSet rs = ps.executeQuery();
@@ -99,6 +139,7 @@ public class TaskDBOperations implements IDatabaseActions<Task> {
                 t.setSerialNumber(rs.getString("response_serial_number"));
                 t.setProject(rs.getInt("project"));
                 t.setTitle(rs.getString("title_task"));
+                t.setTeamMemberName(rs.getString("first_name") + " " + rs.getString("last_name"));
             }
         }
         catch (SQLException e){
@@ -120,8 +161,8 @@ public class TaskDBOperations implements IDatabaseActions<Task> {
             ps.setBoolean(6,value.isComplete());
             ps.setString(7,value.getSerialNumber());
             ps.setInt(8,value.getProject());
-            ps.setInt(9,value.getId());
-            ps.setString(10,value.getTitle());
+            ps.setString(9,value.getTitle());
+            ps.setInt(10,value.getId());
             int result = ps.executeUpdate();
             if(result!=0){
                 bl=true;
@@ -131,6 +172,31 @@ public class TaskDBOperations implements IDatabaseActions<Task> {
             bl = false;
         }
         return bl;
+    }
+
+    public ArrayList<Employee> retrieveEmployeesByManager(Integer employeeID){
+        ArrayList list = new ArrayList();
+
+            //Standard JDBC Code
+            String query =
+                    "select * from employees where manager_id = ?";
+            try(PreparedStatement ps = connection.prepareStatement(query)) {
+                ps.setInt(1,employeeID);
+                ResultSet rs = ps.executeQuery();
+                while(rs.next()) {
+                    Employee e = new Employee();
+                    e.setId(rs.getInt("employee_id"));
+                    e.setFirstName(rs.getString("first_name"));
+                    e.setLastName(rs.getString("last_name"));
+                    e.setEmail(rs.getString("email"));
+
+                    list.add(e);
+                }
+            }
+            catch (SQLException ex){
+                ex.printStackTrace();
+            }
+        return list;
     }
 
     @Override
@@ -148,4 +214,8 @@ public class TaskDBOperations implements IDatabaseActions<Task> {
 
         return bl;
     }
+
+
+
 }
+

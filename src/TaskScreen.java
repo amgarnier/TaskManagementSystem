@@ -2,10 +2,8 @@ import DBModels.DocumentDBOperations;
 import DBModels.NotesDBOperations;
 import DBModels.ProjectDBOperations;
 import DBModels.TaskDBOperations;
-import Models.Document;
-import Models.Note;
-import Models.Project;
-import Models.Task;
+import Models.*;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -15,11 +13,13 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * FinalView -- Brief statement as to file purpose
- * CSIS 212 -- B032023
+ * CSIS 643
  * Citations as needed
  */
 public class TaskScreen extends JFrame{
@@ -47,6 +47,8 @@ public class TaskScreen extends JFrame{
     private JButton btnRefreshProjects;
     private JTextField tfTitle;
     private JTextField tfTitleDocument;
+    private JComboBox comboBox1;
+    private JButton deleteTaskButton;
     int _taskId;
 
     public TaskScreen(){
@@ -57,6 +59,7 @@ public class TaskScreen extends JFrame{
         ProjectDBOperations projectDBOperations = new ProjectDBOperations(Main.connection);
          int empID = Main.employee.getId();
         ArrayList<Project> projects = projectDBOperations.retrieveProjectByEmployee(Main.employee.getId());
+        List<Employee> employeeByManager = taskDBOperations.retrieveEmployeesByManager(1);
         cbProject.setModel(new DefaultComboBoxModel<Project>(projects.toArray(new Project[0])));
         setTitle("Task");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -65,6 +68,18 @@ public class TaskScreen extends JFrame{
         tabbedPane1.setEnabledAt(2,false);
         editButton.setVisible(false);
         btnAddNote.setEnabled(false);
+        comboBox1.setModel(new DefaultComboBoxModel<Employee>(employeeByManager.toArray(new Employee[1])));
+        Employee selectedEmployees = null;
+        for (Employee employee : employeeByManager) {
+            if(employee.getId().equals(Main.employee.getId())){
+                selectedEmployees = employee;
+                break;
+            }else
+            {
+                selectedEmployees = null;
+            }
+        }
+        comboBox1.setSelectedItem(selectedEmployees);
         setVisible(true);
 
         clearButton.addActionListener(new ActionListener() {
@@ -73,6 +88,23 @@ public class TaskScreen extends JFrame{
                 taDescription.setText("");
                 tfDueDate.setText("");
                 tfStartDate.setText("");
+            }
+        });
+        deleteTaskButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if( taskDBOperations.deleteItem(_taskId)){
+                    Main.mainScreen.updateTables();
+                    JOptionPane.showMessageDialog(null, "Successfully updated task");
+                    dispose();
+
+                }
+                else{
+                    JOptionPane.showMessageDialog(null,"Error your task was not deleted please try again");
+                }
+
             }
         });
         addButton.addActionListener(new ActionListener() {
@@ -91,8 +123,9 @@ public class TaskScreen extends JFrame{
                     JOptionPane.showMessageDialog(null,"Error your entered in the dates in the wrong format\n try YYYY-MM-DD");
                     throw new RuntimeException(ex);
                 }
+                int empIDSelected = employeeByManager.get(comboBox1.getSelectedIndex()).getId();
 
-                Task task = new Task(Main.employee.getId(),taDescription.getText(),sqlStartDate,sqlEndDate,selectedProject.getProjectId(),tfTitle.getText());
+                Task task = new Task(empIDSelected,taDescription.getText(),sqlStartDate,sqlEndDate,selectedProject.getProjectId(),tfTitle.getText());
                 if(taskDBOperations.createItem(task)){
                     Main.mainScreen.updateTables();
                     JOptionPane.showMessageDialog(null, "Successfully added task");
@@ -115,6 +148,22 @@ public class TaskScreen extends JFrame{
         tfCreationDateNote.setText(timeStamp.toString());
         TaskDBOperations taskDBOperations = new TaskDBOperations(Main.connection);
         Task task = taskDBOperations.retrieveItem(_taskId);
+        ProjectDBOperations projectDBOperations = new ProjectDBOperations(Main.connection);
+        ArrayList<Project> projects = projectDBOperations.retrieveProjectByEmployee(Main.employee.getId());
+        List<Employee> employeeByManager = taskDBOperations.retrieveEmployeesByManager(1);
+        cbProject.setModel(new DefaultComboBoxModel<Project>(projects.toArray(new Project[0])));
+        comboBox1.setModel(new DefaultComboBoxModel<Employee>(employeeByManager.toArray(new Employee[1])));
+        Employee selectedEmployees = null;
+            for (Employee employee : employeeByManager) {
+                if(employee.getId().equals(task.getTeamMember())){
+                    selectedEmployees = employee;
+                    break;
+                }else
+                {
+                    selectedEmployees = null;
+                }
+            }
+        comboBox1.setSelectedItem(selectedEmployees);
         tfTitle.setText(task.getTitle());
         tfStartDate.setText(task.getCreationDate().toString());
         tfDueDate.setText(task.getDueDate().toString());
@@ -140,6 +189,25 @@ public class TaskScreen extends JFrame{
                 tfStartDate.setText("");
             }
         });
+
+        deleteTaskButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if( taskDBOperations.deleteItem(_taskId)){
+                    Main.mainScreen.updateTables();
+                    JOptionPane.showMessageDialog(null, "Successfully updated task");
+                    dispose();
+
+                }
+                else{
+                    JOptionPane.showMessageDialog(null,"Error your task was not added please try again");
+                }
+
+            }
+        });
+
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -157,7 +225,9 @@ public class TaskScreen extends JFrame{
                     throw new RuntimeException(ex);
                 }
 
-                Task task = new Task( _taskId, Main.employee.getId(),taDescription.getText(),sqlStartDate,sqlEndDate,selectedProject.getProjectId(),tfTitle.getText());
+                int empIDSelected = employeeByManager.get(comboBox1.getSelectedIndex()).getId();
+
+                Task task = new Task( _taskId, empIDSelected,taDescription.getText(),sqlStartDate,sqlEndDate,selectedProject.getProjectId(),tfTitle.getText());
                 if(taskDBOperations.updateItem(task)){
                     Main.mainScreen.updateTables();
                     JOptionPane.showMessageDialog(null, "Successfully updated task");
@@ -382,7 +452,10 @@ public class TaskScreen extends JFrame{
     void updateProjectList(Task task){
         ProjectDBOperations projectDBOperations = new ProjectDBOperations(Main.connection);
         ArrayList<Project> projects = projectDBOperations.retrieveProjectByEmployee(Main.employee.getId());
+
+
         cbProject.setModel(new DefaultComboBoxModel<Project>(projects.toArray(new Project[0])));
+
         //int projectID = task.getProject();
         //Optional<Project> selectedProject = projects.stream().filter(p-> p.getProjectId() == projectID).findFirst();
         //cbProject.setSelectedItem(selectedProject.get());
